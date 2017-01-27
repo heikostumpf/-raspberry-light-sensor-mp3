@@ -2,6 +2,7 @@
 
 import RPi.GPIO as GPIO
 import time
+import pygame
 
 __author__ = 'Gus (Adapted from Adafruit)'
 __license__ = "GPL"
@@ -29,11 +30,29 @@ def rc_time (pin_to_circuit):
 
     return count
 
+def start_stop_music(time):
+	print time
+	if time >= 10000:
+		print "Greater than 10000"
+		if not pygame.mixer.music.get_busy():
+			print "play music"
+			pygame.mixer.music.play()
+	else:
+		print "Lower than 10000"
+		pygame.mixer.music.stop()
+
 #Catch when script is interupted, cleanup correctly
 try:
+    file = '../mp3/sound.mp3'
+    pygame.init()
+    pygame.mixer.init()
+    pygame.mixer.music.load(file)
+    
     # Main loop
     while True:
-        print rc_time(pin_to_circuit)
+        rctime = rc_time(pin_to_circuit)
+        start_stop_music(rctime)
+
 except KeyboardInterrupt:
     pass
 finally:
