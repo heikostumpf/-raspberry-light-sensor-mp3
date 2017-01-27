@@ -23,23 +23,12 @@ def rc_time (pin_to_circuit):
 
     #Change the pin back to input
     GPIO.setup(pin_to_circuit, GPIO.IN)
-  
+ 
     #Count until the pin goes high
     while (GPIO.input(pin_to_circuit) == GPIO.LOW):
-        count += 1
+	count += 1
 
     return count
-
-def start_stop_music(time):
-	print time
-	if time >= 10000:
-		print "Greater than 10000"
-		if not pygame.mixer.music.get_busy():
-			print "play music"
-			pygame.mixer.music.play()
-	else:
-		print "Lower than 10000"
-		pygame.mixer.music.stop()
 
 #Catch when script is interupted, cleanup correctly
 try:
@@ -51,7 +40,18 @@ try:
     # Main loop
     while True:
         rctime = rc_time(pin_to_circuit)
-        start_stop_music(rctime)
+        print rctime
+	if rctime <= 1000:
+		if not pygame.mixer.music.get_busy():
+			print "play music"
+			pygame.mixer.music.load(file)
+			pygame.mixer.music.rewind()
+			pygame.mixer.music.play()
+	else:
+		if pygame.mixer.music.get_busy():
+			print "stop music"
+			pygame.mixer.music.rewind()
+			pygame.mixer.music.stop()
 
 except KeyboardInterrupt:
     pass
